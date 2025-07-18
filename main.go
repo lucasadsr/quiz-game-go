@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type Question struct {
@@ -103,6 +104,7 @@ func (g *GameState) Run() {
 		} else {
 			fmt.Printf("%sResposta incorreta!%s\n", Red, Reset)
 		}
+		fmt.Println(strings.Repeat("-", 30))
 	}
 }
 
@@ -111,6 +113,8 @@ func main() {
 	go game.ProcessCSV()
 	game.Init()
 	game.Run()
+
+	fmt.Printf("Fim do quiz, %s! Sua pontuação final é: %d/%d\n", game.Name, game.Score, len(game.Questions))
 }
 
 func toInt(s string) (int, error) {
