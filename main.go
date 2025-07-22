@@ -17,10 +17,13 @@ type Question struct {
 }
 
 type GameState struct {
-	Name string
-	Score int
+	Name     string
+	Score    int
+	Subject  string
 	Questions []Question
 }
+
+var Subjects = []string{"Português", "História", "Geografia", "Ciências"}
 
 var Cyan = "\033[36m"
 var Reset = "\033[0m"
@@ -39,12 +42,39 @@ func (g *GameState) Init() {
 	}
 
 	g.Name = name[:len(name)-2]
-	
+
 	fmt.Printf("Olá, %s! Vamos começar o quiz.\n", g.Name)
 }
 
+func (g *GameState) SetSubject() {
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Println("Qual matéria você gostaria de estudar?")
+	for i, subject := range Subjects {
+		fmt.Printf("[%d] %s\n", i+1, subject)
+	}
+
+	fmt.Print("Escolha uma opção: ")
+
+	var subject int
+	var err error
+	for {
+		read, _ := reader.ReadString('\n')
+		subject, err = toInt(read[:len(read)-2])
+		if err != nil {
+			fmt.Println(err.Error())
+			continue
+		}
+		g.Subject = Subjects[subject-1]
+		fmt.Printf("Você escolheu estudar %s.\n", g.Subject)
+		break
+	}
+	fmt.Println(strings.Repeat("-", 30))
+}
+
 func (g *GameState) ProcessCSV() {
-	file, err := os.Open("quizgo.csv")
+	filename := fmt.Sprintf("./questions/questions-%s.csv", g.Subject)
+	file, err := os.Open(filename)
 	if err != nil {
 		panic("Erro ao abrir o arquivo CSV")
 	}
@@ -110,8 +140,9 @@ func (g *GameState) Run() {
 
 func main() {
 	game := &GameState{}
-	go game.ProcessCSV()
 	game.Init()
+	game.SetSubject()
+	game.ProcessCSV()
 	game.Run()
 
 	fmt.Printf("Fim do quiz, %s! Sua pontuação final é: %d/%d\n", game.Name, game.Score, len(game.Questions))
