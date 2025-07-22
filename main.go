@@ -8,6 +8,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/lucasadsr/quiz-game-go/src/ui"
 )
 
 type Question struct {
@@ -24,11 +26,6 @@ type GameState struct {
 }
 
 var Subjects = []string{"Português", "História", "Geografia", "Ciências"}
-
-var Cyan = "\033[36m"
-var Reset = "\033[0m"
-var Green = "\033[32m"
-var Red = "\033[31m"
 
 func (g *GameState) Init() {
 	fmt.Println("Seja bem vindo(a) ao quiz")
@@ -107,8 +104,7 @@ func (g *GameState) Run() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for index, question := range g.Questions {
-		fmt.Printf("%s%d. %s\n", Cyan, index+1, question.Text)
-		fmt.Print(Reset)
+		ui.InfoText(fmt.Sprintf("%d. %s", index+1, question.Text))
 
 		for j, option := range question.Options {
 			fmt.Printf("[%d] %s\n", j+1, option)
@@ -130,9 +126,9 @@ func (g *GameState) Run() {
 
 		if answer == question.Answer {
 			g.Score++
-			fmt.Printf("%sResposta correta!%s\n", Green, Reset)
+			ui.SuccessText("Resposta correta!")
 		} else {
-			fmt.Printf("%sResposta incorreta!%s\n", Red, Reset)
+			ui.ErrorText("Resposta incorreta!")
 		}
 		fmt.Println(strings.Repeat("-", 30))
 	}
