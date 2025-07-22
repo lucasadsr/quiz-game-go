@@ -3,13 +3,12 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
-	"errors"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/lucasadsr/quiz-game-go/src/ui"
+	"github.com/lucasadsr/quiz-game-go/src/utils"
 )
 
 type Question struct {
@@ -57,7 +56,7 @@ func (g *GameState) SetSubject() {
 	var err error
 	for {
 		read, _ := reader.ReadString('\n')
-		subject, err = toInt(read[:len(read)-2])
+		subject, err = utils.ToInt(read[:len(read)-2])
 		if err != nil {
 			fmt.Println(err.Error())
 			continue
@@ -86,7 +85,7 @@ func (g *GameState) ProcessCSV() {
 
 	for index, record := range records {
 		if index > 0 {
-			correctAnswer, _ := toInt(record[len(record)-1])
+			correctAnswer, _ := utils.ToInt(record[len(record)-1])
 			question := Question {
 				Text: record[0],
 				Answer: correctAnswer,
@@ -116,7 +115,7 @@ func (g *GameState) Run() {
 		var err error
 		for {
 			read, _ := reader.ReadString('\n')
-			answer, err = toInt(read[:len(read)-2])
+			answer, err = utils.ToInt(read[:len(read)-2])
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
@@ -142,12 +141,4 @@ func main() {
 	game.Run()
 
 	fmt.Printf("Fim do quiz, %s! Sua pontuação final é: %d/%d\n", game.Name, game.Score, len(game.Questions))
-}
-
-func toInt(s string) (int, error) {
-	i, err := strconv.Atoi(s)
-	if err != nil {
-		return 0, errors.New("não é permitido caracteres não numéricos")
-	}
-	return i, nil
 }
