@@ -1,10 +1,10 @@
 # Quiz Go 🎯
 
-Um jogo de quiz interativo desenvolvido em Go, onde o usuário responde perguntas de múltipla escolha carregadas de um arquivo CSV.
+Um jogo de quiz interativo desenvolvido em Go, onde o usuário pode escolher entre diferentes matérias e responder perguntas de múltipla escolha carregadas de arquivos CSV específicos.
 
 ## 📋 Descrição
 
-O Quiz Go é uma aplicação de linha de comando que permite aos usuários participarem de um quiz personalizado. O programa carrega perguntas de um arquivo CSV, apresenta as opções de resposta e calcula a pontuação final do jogador. Com uma interface colorida e amigável, o jogo oferece uma experiência interativa e educativa.
+O Quiz Go é uma aplicação de linha de comando que permite aos usuários participarem de um quiz educativo com múltiplas categorias. O programa oferece a escolha entre diferentes matérias, carrega perguntas específicas da matéria escolhida, apresenta as opções de resposta e calcula a pontuação final do jogador. Com uma interface colorida e amigável, o jogo oferece uma experiência interativa e educativa personalizada.
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -32,18 +32,21 @@ O projeto segue uma arquitetura simples e orientada a objetos:
 - **`GameState`** - Gerencia o estado do jogo contendo:
   - Nome do jogador
   - Pontuação atual
+  - Matéria escolhida
   - Lista de perguntas carregadas
 
 ### Métodos Principais
 
 - `Init()` - Inicializa o jogo e captura o nome do usuário
-- `ProcessCSV()` - Carrega e processa as perguntas do arquivo CSV
+- `SetSubject()` - Permite ao usuário escolher a matéria do quiz
+- `ProcessCSV()` - Carrega e processa as perguntas do arquivo CSV da matéria selecionada
 - `Run()` - Executa o loop principal do quiz
 - `toInt()` - Função auxiliar para conversão e validação de entrada
 
 ### Características Técnicas
 
-- **Processamento concorrente**: O carregamento do CSV é executado em uma goroutine
+- **Sistema de categorias**: Quatro matérias disponíveis (Português, História, Geografia, Ciências)
+- **Carregamento dinâmico**: Perguntas carregadas conforme a matéria escolhida
 - **Validação de entrada**: Tratamento de erros para entradas inválidas
 - **Interface colorida**: Uso de códigos ANSI para colorização do terminal
 - **Tratamento de arquivos**: Leitura segura de arquivos CSV com defer para fechamento
@@ -52,10 +55,14 @@ O projeto segue uma arquitetura simples e orientada a objetos:
 
 ```
 quiz-game/
-├── main.go          # Código principal da aplicação
-├── quizgo.csv       # Arquivo com as perguntas do quiz
-├── go.mod           # Arquivo de módulo do Go
-└── README.md        # Documentação do projeto
+├── main.go                    # Código principal da aplicação
+├── questions/                 # Diretório com perguntas por matéria
+│   ├── questions-Português.csv    # Perguntas de Português
+│   ├── questions-História.csv     # Perguntas de História
+│   ├── questions-Geografia.csv    # Perguntas de Geografia
+│   └── questions-Ciências.csv     # Perguntas de Ciências
+├── go.mod                     # Arquivo de módulo do Go
+└── README.md                  # Documentação do projeto
 ```
 
 ## ⚙️ Como Executar
@@ -82,6 +89,7 @@ quiz-game/
 
 3. **Siga as instruções no terminal:**
    - Digite seu nome quando solicitado
+   - Escolha a matéria que deseja estudar (Português, História, Geografia ou Ciências)
    - Responda as perguntas escolhendo o número da opção desejada
    - Veja sua pontuação final ao concluir o quiz
 
@@ -98,47 +106,70 @@ quiz-game.exe
 ./quiz-game
 ```
 
-## 📝 Formato do Arquivo CSV
+## 📝 Formato dos Arquivos CSV
 
-O arquivo `quizgo.csv` deve seguir o formato:
+Os arquivos de perguntas estão organizados por matéria na pasta `questions/` e devem seguir o formato:
 
 ```csv
 Pergunta,Opção 1,Opção 2,Opção 3,Opção 4,Resposta Correta
-Qual é o maior planeta do sistema solar?,Terra,Marte,Júpiter,Saturno,3
+Qual das palavras abaixo está escrita corretamente?,Exessão,Excessão,Exceção,Eceção,2
 ```
+
+### Matérias Disponíveis:
+
+- **questions-Português.csv** - Perguntas sobre gramática, literatura e redação
+- **questions-História.csv** - Perguntas sobre história geral e do Brasil
+- **questions-Geografia.csv** - Perguntas sobre geografia física e humana
+- **questions-Ciências.csv** - Perguntas sobre biologia, física e química
+
+### Formato das colunas:
 
 - **Primeira linha**: Cabeçalho (será ignorado)
 - **Colunas subsequentes**:
   - Texto da pergunta
   - Opções de resposta (pode ter quantas quiser)
-  - Última coluna: Número da resposta correta (baseado em 1)
-
-## 🎮 Como Jogar
+  - Última coluna: Número da resposta correta (baseado em 1)## 🎮 Como Jogar
 
 1. Execute o programa
 2. Digite seu nome quando solicitado
-3. Para cada pergunta:
+3. Escolha a matéria que deseja estudar:
+   - [1] Português
+   - [2] História
+   - [3] Geografia
+   - [4] Ciências
+4. Para cada pergunta:
    - Leia a pergunta apresentada
    - Escolha uma das opções numeradas
    - Digite o número da sua resposta
-4. Ao final, veja sua pontuação total
+5. Ao final, veja sua pontuação total
 
 ## 🌟 Funcionalidades
 
 - ✅ Interface colorida no terminal
-- ✅ Carregamento dinâmico de perguntas via CSV
+- ✅ Sistema de categorias por matéria
+- ✅ Carregamento dinâmico de perguntas por matéria escolhida
+- ✅ Quatro matérias disponíveis (Português, História, Geografia, Ciências)
 - ✅ Validação de entrada do usuário
 - ✅ Pontuação em tempo real
 - ✅ Feedback imediato para respostas
-- ✅ Processamento concorrente para melhor performance
+- ✅ Organização modular dos arquivos de perguntas
 
 ## 🔧 Personalização
 
-Para adicionar suas próprias perguntas:
+### Adicionando novas perguntas:
 
-1. Edite o arquivo `quizgo.csv`
+1. Edite o arquivo CSV da matéria desejada na pasta `questions/`
 2. Adicione novas linhas seguindo o formato especificado
 3. Execute o programa normalmente
+
+### Adicionando uma nova matéria:
+
+1. Crie um novo arquivo CSV seguindo o padrão: `questions-[NomeDaMatéria].csv`
+2. Adicione a nova matéria no array `Subjects` no arquivo `main.go`:
+   ```go
+   var Subjects = []string{"Português", "História", "Geografia", "Ciências", "Nova Matéria"}
+   ```
+3. Compile e execute o programa
 
 ## 📄 Licença
 
