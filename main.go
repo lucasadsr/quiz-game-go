@@ -66,6 +66,11 @@ func (g *GameState) SetSubject() {
 			fmt.Println(err.Error())
 			continue
 		}
+		if subject < 1 || subject > len(Subjects) {
+			fmt.Println("Opção inválida. Por favor, escolha um número entre 1 e", len(Subjects))
+			continue
+		}
+
 		g.Subject = Subjects[subject-1]
 		fmt.Printf("Você escolheu estudar %s.\n", g.Subject)
 		break
@@ -123,6 +128,10 @@ func (g *GameState) Run() {
 			answer, err = utils.ToInt(read[:len(read)-2])
 			if err != nil {
 				fmt.Println(err.Error())
+				continue
+			}
+			if answer < 1 || answer > len(question.Options) {
+				fmt.Println("Opção inválida. Por favor, escolha um número entre 1 e", len(question.Options))
 				continue
 			}
 			break
