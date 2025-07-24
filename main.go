@@ -31,10 +31,15 @@ func (g *GameState) Init() {
 	fmt.Print("Escreva seu nome: ")
 	reader := bufio.NewReader(os.Stdin)
 
-	name, err := reader.ReadString('\n')
-
-	if err != nil {
-		panic("Erro ao ler o nome")
+	var name string
+	var err error
+	for {
+		name, err = reader.ReadString('\n')
+		if err != nil || len(strings.TrimSpace(name)) < 2 {
+			fmt.Println("Digite um nome válido.")
+			continue
+		}
+		break
 	}
 
 	g.Name = name[:len(name)-2]
