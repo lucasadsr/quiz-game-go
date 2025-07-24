@@ -3,11 +3,12 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
-	"errors"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
+
+	"github.com/lucasadsr/quiz-game-go/src/ui"
+	"github.com/lucasadsr/quiz-game-go/src/utils"
 )
 
 type Question struct {
@@ -25,20 +26,20 @@ type GameState struct {
 
 var Subjects = []string{"Português", "História", "Geografia", "Ciências"}
 
-var Cyan = "\033[36m"
-var Reset = "\033[0m"
-var Green = "\033[32m"
-var Red = "\033[31m"
-
 func (g *GameState) Init() {
 	fmt.Println("Seja bem vindo(a) ao quiz")
 	fmt.Print("Escreva seu nome: ")
 	reader := bufio.NewReader(os.Stdin)
 
-	name, err := reader.ReadString('\n')
-
-	if err != nil {
-		panic("Erro ao ler o nome")
+	var name string
+	var err error
+	for {
+		name, err = reader.ReadString('\n')
+		if err != nil || len(strings.TrimSpace(name)) < 2 {
+			fmt.Println("Digite um nome válido.")
+			continue
+		}
+		break
 	}
 
 	g.Name = name[:len(name)-2]
@@ -60,7 +61,7 @@ func (g *GameState) SetSubject() {
 	var err error
 	for {
 		read, _ := reader.ReadString('\n')
-		subject, err = toInt(read[:len(read)-2])
+		subject, err = utils.ToInt(read[:len(read)-2])
 		if err != nil {
 			fmt.Println(err.Error())
 			continue
@@ -89,7 +90,7 @@ func (g *GameState) ProcessCSV() {
 
 	for index, record := range records {
 		if index > 0 {
-			correctAnswer, _ := toInt(record[len(record)-1])
+			correctAnswer, _ := utils.ToInt(record[len(record)-1])
 			question := Question {
 				Text: record[0],
 				Answer: correctAnswer,
@@ -107,8 +108,7 @@ func (g *GameState) Run() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for index, question := range g.Questions {
-		fmt.Printf("%s%d. %s\n", Cyan, index+1, question.Text)
-		fmt.Print(Reset)
+		ui.InfoText(fmt.Sprintf("%d. %s", index+1, question.Text))
 
 		for j, option := range question.Options {
 			fmt.Printf("[%d] %s\n", j+1, option)
@@ -120,7 +120,7 @@ func (g *GameState) Run() {
 		var err error
 		for {
 			read, _ := reader.ReadString('\n')
-			answer, err = toInt(read[:len(read)-2])
+			answer, err = utils.ToInt(read[:len(read)-2])
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
@@ -130,9 +130,9 @@ func (g *GameState) Run() {
 
 		if answer == question.Answer {
 			g.Score++
-			fmt.Printf("%sResposta correta!%s\n", Green, Reset)
+			ui.SuccessText("Resposta correta!")
 		} else {
-			fmt.Printf("%sResposta incorreta!%s\n", Red, Reset)
+			ui.ErrorText("Resposta incorreta!")
 		}
 		fmt.Println(strings.Repeat("-", 30))
 	}
@@ -146,12 +146,4 @@ func main() {
 	game.Run()
 
 	fmt.Printf("Fim do quiz, %s! Sua pontuação final é: %d/%d\n", game.Name, game.Score, len(game.Questions))
-}
-
-func toInt(s string) (int, error) {
-	i, err := strconv.Atoi(s)
-	if err != nil {
-		return 0, errors.New("não é permitido caracteres não numéricos")
-	}
-	return i, nil
 }
